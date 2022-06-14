@@ -1,30 +1,21 @@
 import { useEffect, useState } from 'react'
 import { Condition, Note } from '../interfaces';
 import axios from 'axios'
+import NoteService from '../services/noteservice';
 
 const apiPaths = {
   getNotes: () => `/api/notes`
 }
 
-const useNoteRepo = () => {
+const useNoteRepo = (retry: Boolean) => {
+
   const [notes, setNotes] = useState<Note[]>([])
 
   useEffect(() => {
     const asyncOperation = async () => {
       try {
-        const { data: { data } } = await axios.get(apiPaths.getNotes());
-
-        const notes = data.map(({ id, data: { text, tags }} : { id: string, data: { text: string, tags: []} }) => {
-
-          const conditions = tags.map(({ id, name }) => {
-            const condition: Condition = { id, name }
-            return condition;
-          })
-
-          const note: Note = { id, text, tags: conditions }
-          return note;
-        });
-
+        const noteService = new NoteService()
+        const notes = await noteService.getNotes();
         setNotes(notes)
       } catch (e) {
         throw e;
@@ -32,7 +23,7 @@ const useNoteRepo = () => {
     }
 
     asyncOperation();
-  }, [])
+  }, [retry])
 
   return {
     notes

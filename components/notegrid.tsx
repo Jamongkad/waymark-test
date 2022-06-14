@@ -15,13 +15,13 @@ const columns: GridColDef[] = [
 
 const NoteGrid = () => {
 
-  const { notes, conditions } = useContext(NoteApiContext);
+  const { notes } = useContext(NoteApiContext);
 
   const rows: GridRowsProp = notes.map((note) => {
     return {
       id: note.id,
       notes: note.text,
-      tags: note.tags.map((tag) => tag.name).join(", ")
+      tags: note.tags.map((tag) => tag.label).join(", ")
     }
   })
 
@@ -35,7 +35,7 @@ const NoteGrid = () => {
       <DataGrid 
         getRowHeight={() => 'auto'}
         rows={rows} columns={columns} 
-        pageSize={5}
+        pageSize={10}
         rowsPerPageOptions={[5]}
       />      
     </Paper>

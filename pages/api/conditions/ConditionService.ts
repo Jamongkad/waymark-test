@@ -6,10 +6,10 @@ export default class ConditionService {
 
   collection: string = "conditions";
 
-  async createCondition(name: String) {
+  async createCondition(label: String) {
     try {
       const ref = doc(collection(firebaseDB, this.collection)).withConverter(conditionConverter);
-      await setDoc(ref, new Condition(name)); 
+      await setDoc(ref, new Condition(label)); 
       console.log("Document written"); 
     } catch (e) {
       console.error("Error adding document: ", e);

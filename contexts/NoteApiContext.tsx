@@ -1,26 +1,39 @@
-import React, { createContext } from 'react'
-import { Condition, Note } from '../interfaces'
+import React, { createContext, useState } from 'react'
+import { Condition, IConditionApiContext, INoteApiContext, Note } from '../interfaces'
 import useNoteRepo from '../hooks/useNoteRepo'
 import useConditionRepo from '../hooks/useConditionRepo'
 
-interface INoteApiContext {
-  notes: Note[],
-  conditions: Condition[]
-}
-
-const initialState = {
+const noteInitialState = {
   notes: [],
-  conditions: []
+  setRetryNoteRepo: () => {},
+  retryNoteRepo: true
 }
 
-export const NoteApiContext = createContext<INoteApiContext>(initialState);
+const conditionInitialState = {
+  conditions: [],
+}
+
+export const NoteApiContext = createContext<INoteApiContext>(noteInitialState);
+export const ConditionApiContext = createContext<IConditionApiContext>(conditionInitialState);
+
+export const ConditionApiContextProvider = ({ children }: any) => {
+  const { conditions } = useConditionRepo();
+  
+  return (
+    <ConditionApiContext.Provider value={{ conditions }}>
+      {children}
+    </ConditionApiContext.Provider>
+  )
+}
 
 export const NoteApiContextProvider = ({ children }: any) => {
-  const { notes } = useNoteRepo();
-  const { conditions } = useConditionRepo();
+
+  const [retryNoteRepo, setRetryNoteRepo] = useState<Boolean>(true);
+
+  const { notes } = useNoteRepo(retryNoteRepo);
 
   return (
-    <NoteApiContext.Provider value={{ notes, conditions }}>
+    <NoteApiContext.Provider value={{ notes, setRetryNoteRepo, retryNoteRepo }}>
       {children}
     </NoteApiContext.Provider>
   )

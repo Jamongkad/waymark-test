@@ -7,7 +7,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
    const {
-    body: { name },
+    body: { label },
     method,
   } = req 
 
@@ -31,7 +31,7 @@ export default async function handler(
       break
     case 'POST':
       try {
-        await conditionService.createCondition(name);
+        await conditionService.createCondition(label);
         res.status(200).json({ name: 'Condition Created' });
       } catch (e:any) {
         console.error(e);

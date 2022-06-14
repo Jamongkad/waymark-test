@@ -14,9 +14,9 @@ const useConditionRepo = () => {
       try {
         const { data: { data } } = await axios.get(apiPaths.getConditions());
         
-        const conditions = data.map(({ id, data: { name }}: {id: string, data: { name: string}}) => {
+        const conditions = data.map(({ id, data: { label }}: {id: string, data: { label: string}}) => {
           const condition: Condition = {
-            id, name
+            id, label
           }
 
           return condition;
