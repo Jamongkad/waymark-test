@@ -10,9 +10,12 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { ConditionApiContext, NoteApiContext } from '../contexts/NoteApiContext';
 import { Condition, NoteRequestData } from '../interfaces';
 import NoteService from '../services/noteservice';
+import Alert from '@mui/material/Alert';
+import AlertTitle from '@mui/material/AlertTitle';
 
 const AddNoteForm = () => {
-  const [condition, setCondition] = useState<Condition[]>([]);
+  const [chosenCondition, setChosenCondition] = useState<Condition[]>([]);
+  const [validation, setValidation] = useState(false);
   const [note, setNote] = useState('');
   const [open, setOpen] = useState(false);
   const { setRetryNoteRepo, retryNoteRepo } = useContext(NoteApiContext);
@@ -26,15 +29,24 @@ const AddNoteForm = () => {
     setOpen(false);
   };
 
-  const createNote = () => {
-    const noteData: NoteRequestData = {
-      text: note,
-      tags: condition
+  const createNote = async () => {
+
+    if(!note) {
+      setValidation(true);
+      return;
     }
 
+    const noteData: NoteRequestData = {
+      text: note,
+      tags: chosenCondition
+    } 
+
     const noteService = new NoteService();
-    noteService.createNote(noteData);
+    await noteService.createNote(noteData);  
+
+    setValidation(false);
     setRetryNoteRepo(!retryNoteRepo);
+    setChosenCondition([]);
     setOpen(false);
   }
 
@@ -49,12 +61,18 @@ const AddNoteForm = () => {
                 <DialogContentText>
                   Create patient notes which medical practioners will use to provide the best care for their patients.
                 </DialogContentText>
+                {validation ? (
+                  <Alert severity="error">
+                    <AlertTitle>Error</AlertTitle>
+                    This is an error alert — <strong>check it out!</strong>
+                  </Alert>
+                ): <></>}
               </Grid>
               <Grid item xs={8}>
                 <Autocomplete  
                   onChange={(event: SyntheticEvent, newValue: Condition) => { 
                     if(newValue) {
-                      setCondition(current => [...current, newValue]);
+                      setChosenCondition(current => [...current, newValue]);
                     }
                   }}   
                   options={conditions}
@@ -63,12 +81,12 @@ const AddNoteForm = () => {
                 />
               </Grid>
               <Grid item xs={12}> 
-                {condition.map(c => {
+                {chosenCondition.map(c => {
                   return (
                     <Button
                       onClick={() => {
                         const chosenId = c.id;
-                        setCondition(condition.filter(c => c.id !== chosenId));
+                        setChosenCondition(chosenCondition.filter(c => c.id !== chosenId));
                       }}
                       endIcon={<ClearIcon />}
                     >
