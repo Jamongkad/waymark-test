@@ -2,7 +2,7 @@
 
 ### Objective
 
-To engineer a Next.js application that will the display a grid containing notes about an patient and their conditions. 
+To engineer a Next.js application that will the display a grid containing notes about a patient and their conditions. 
 
 ## Getting Started
 
